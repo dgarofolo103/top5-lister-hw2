@@ -94,7 +94,7 @@ class App extends React.Component {
             currentList: prevState.currentList,
             sessionData: {
                 nextKey: prevState.sessionData.nextKey,
-                counter: prevState.sessionData.counter,
+                counter: prevState.sessionData.counter - 1,
                 keyNamePairs: newKeyNamePairs
             },
             currentListKey: prevState.currentListKey
@@ -155,6 +155,35 @@ class App extends React.Component {
             // ANY AFTER EFFECTS?
         });
     }
+    removeList = (listKeyPair) => {
+        let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
+        for (let i = 0; i < newKeyNamePairs.length; i++) {
+            let pair = newKeyNamePairs[i];
+            if (pair.key === listKeyPair.key) {
+                newKeyNamePairs.splice(i, 1)
+            }
+        }
+        this.sortKeyNamePairsByName(newKeyNamePairs);
+
+        let currentList = this.state.currentList;
+        if (currentList !== null) {
+            if (currentList.key === listKeyPair.key) {
+                currentList = null;
+            }
+        }
+
+        this.setState(prevState => ({
+            currentList: currentList,
+            sessionData: {
+                nextKey: prevState.sessionData.nextKey,
+                counter: prevState.sessionData.counter - 1,
+                keyNamePairs: newKeyNamePairs
+            },
+            currentListKey: prevState.currentListKey
+        }), () => {
+            this.hideDeleteListModal();
+        });
+    }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
     // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
     showDeleteListModal() {
@@ -191,6 +220,7 @@ class App extends React.Component {
                 <DeleteModal
                     listKeyPair={this.state.currentListKey}
                     hideDeleteListModalCallback={this.hideDeleteListModal}
+                    removeListCallback={this.removeList}
                 />
             </div>
         );
