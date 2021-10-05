@@ -7,6 +7,7 @@ export default class ListItem extends React.Component {
         this.state = {
             text: this.props.currentList.items[this.props.index],
             editActive: false,
+            draggedOver: false
         }
     }
 
@@ -42,6 +43,18 @@ export default class ListItem extends React.Component {
         this.setState({ text: event.target.value });
     }
 
+    handleDragOver = (event) => {
+        this.setState({
+            draggedOver: true
+        })
+    }
+
+    handleDragLeave = (event) => {
+        this.setState({
+            draggedOver: false
+        })
+    }
+
     render() {
         if(this.state.editActive) {
             return(
@@ -54,11 +67,21 @@ export default class ListItem extends React.Component {
                 />
             )
         }
+        else if(this.state.draggedOver) {
+            return(
+                <div 
+                    className="top5-item-dragged-to"
+                    onDragLeave={this.handleDragLeave}>
+                {this.props.currentList.items[this.props.index]}
+                </div>
+            )
+        }
         else{
             return(
                 <div 
                     className="top5-item"
                     onClick={this.handleClick}
+                    onDragOver={this.handleDragOver}
                     draggable>
                     {this.props.currentList.items[this.props.index]}
                 </div>
