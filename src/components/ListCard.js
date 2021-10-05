@@ -35,6 +35,7 @@ export default class ListCard extends React.Component {
         });
     }
     handleUpdate = (event) => {
+        console.log(event.target.value);
         this.setState({ text: event.target.value });
     }
     handleKeyPress = (event) => {
@@ -66,7 +67,6 @@ export default class ListCard extends React.Component {
                 />)
         }
         else {
-
             let selectClass = "unselected-list-card";
             if (selected) {
                 selectClass = "selected-list-card";
