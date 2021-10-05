@@ -5,7 +5,7 @@ import './App.css';
 import DBManager from './db/DBManager';
 
 // THESE ARE OUR REACT COMPONENTS
-import DeleteModal from './components/DeleteModal';
+import DeleteModal from './components/DeleteModal.js';
 import Banner from './components/Banner.js'
 import Sidebar from './components/Sidebar.js'
 import Workspace from './components/Workspace.js';
@@ -24,7 +24,8 @@ class App extends React.Component {
         // SETUP THE INITIAL STATE
         this.state = {
             currentList : null,
-            sessionData : loadedSessionData
+            sessionData : loadedSessionData,
+            currentListKey : null,
         }
     }
     sortKeyNamePairsByName = (keyNamePairs) => {
@@ -64,7 +65,8 @@ class App extends React.Component {
                 nextKey: prevState.sessionData.nextKey + 1,
                 counter: prevState.sessionData.counter + 1,
                 keyNamePairs: updatedPairs
-            }
+            },
+            currentListKey: prevState.currentListKey
         }), () => {
             // PUTTING THIS NEW LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
@@ -94,7 +96,8 @@ class App extends React.Component {
                 nextKey: prevState.sessionData.nextKey,
                 counter: prevState.sessionData.counter,
                 keyNamePairs: newKeyNamePairs
-            }
+            },
+            currentListKey: prevState.currentListKey
         }), () => {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
@@ -104,6 +107,7 @@ class App extends React.Component {
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
+
     renameListItem = (index, newName) => {
         let currentList = this.state.currentList;
         currentList.items[index] = newName;
@@ -113,7 +117,8 @@ class App extends React.Component {
                 nextKey: prevState.sessionData.nextKey,
                 counter: prevState.sessionData.counter,
                 keyNamePairs: prevState.sessionData.keyNamePairs
-            }
+            },
+            currentListKey: prevState.currentListKey
         }), () => {
             // ANY AFTER EFFECTS?
         });
@@ -123,7 +128,8 @@ class App extends React.Component {
         let newCurrentList = this.db.queryGetList(key);
         this.setState(prevState => ({
             currentList: newCurrentList,
-            sessionData: prevState.sessionData
+            sessionData: prevState.sessionData,
+            currentListKey: prevState.currentListKey
         }), () => {
             // ANY AFTER EFFECTS?
         });
@@ -133,17 +139,21 @@ class App extends React.Component {
         this.setState(prevState => ({
             currentList: null,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
-            sessionData: this.state.sessionData
+            sessionData: this.state.sessionData,
+            currentListKey: prevState.currentListKey
         }), () => {
             // ANY AFTER EFFECTS?
         });
     }
-    deleteList = () => {
-        // SOMEHOW YOU ARE GOING TO HAVE TO FIGURE OUT
-        // WHICH LIST IT IS THAT THE USER WANTS TO
-        // DELETE AND MAKE THAT CONNECTION SO THAT THE
-        // NAME PROPERLY DISPLAYS INSIDE THE MODAL
+    deleteList = (listKeyPair) => {
         this.showDeleteListModal();
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            sessionData: prevState.sessionData,
+            currentListKey: listKeyPair
+        }), () => {
+            // ANY AFTER EFFECTS?
+        });
     }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
     // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
@@ -179,6 +189,7 @@ class App extends React.Component {
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteModal
+                    listKeyPair={this.state.currentListKey}
                     hideDeleteListModalCallback={this.hideDeleteListModal}
                 />
             </div>

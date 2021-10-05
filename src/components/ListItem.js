@@ -58,7 +58,8 @@ export default class ListItem extends React.Component {
             return(
                 <div 
                     className="top5-item"
-                    onClick={this.handleClick}>
+                    onClick={this.handleClick}
+                    draggable>
                     {this.props.currentList.items[this.props.index]}
                 </div>
             )
