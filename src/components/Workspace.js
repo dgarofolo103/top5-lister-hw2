@@ -4,7 +4,10 @@ import ListItem from './ListItem'
 export default class Workspace extends React.Component {
     render() {
         const {currentList,
-                renameListItemCallback} = this.props;
+                renameListItemCallback,
+                dragStartCallback,
+                onDropCallback,
+                dragOverCallback} = this.props;
         if (currentList != null) {
             return (
                 <div id="top5-workspace">
@@ -23,6 +26,9 @@ export default class Workspace extends React.Component {
                                     currentList = {currentList}
                                     index = {index}
                                     renameListItemCallback = {renameListItemCallback}
+                                    dragStartCallback = {dragStartCallback}
+                                    onDropCallback = {onDropCallback}
+                                    dragOverCallback = {dragOverCallback}
                                 />
                             ))
                         }

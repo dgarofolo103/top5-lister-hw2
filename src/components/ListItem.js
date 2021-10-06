@@ -44,12 +44,28 @@ export default class ListItem extends React.Component {
     }
 
     handleDragOver = (event) => {
+        event.preventDefault();
+        let endIndex = this.props.index;
+        this.props.dragOverCallback(endIndex);
         this.setState({
             draggedOver: true
         })
     }
 
     handleDragLeave = (event) => {
+        this.setState({
+            draggedOver: false
+        })
+    }
+
+    handleDragStart = (event) => {
+        let startIndex = this.props.index;
+        this.props.dragStartCallback(startIndex);
+    }
+
+    handleOnDrop = (event) => {
+        event.preventDefault();
+        this.props.onDropCallback();
         this.setState({
             draggedOver: false
         })
@@ -71,7 +87,10 @@ export default class ListItem extends React.Component {
             return(
                 <div 
                     className="top5-item-dragged-to"
-                    onDragLeave={this.handleDragLeave}>
+                    onDragLeave={this.handleDragLeave}
+                    onDragOver={this.handleDragOver}
+                    onDrop={this.handleOnDrop}
+                    draggable>
                 {this.props.currentList.items[this.props.index]}
                 </div>
             )
@@ -82,6 +101,8 @@ export default class ListItem extends React.Component {
                     className="top5-item"
                     onClick={this.handleClick}
                     onDragOver={this.handleDragOver}
+                    onDragStart={this.handleDragStart}
+                    onDrop={this.handleOnDrop}
                     draggable>
                     {this.props.currentList.items[this.props.index]}
                 </div>

@@ -26,6 +26,7 @@ class App extends React.Component {
             currentList : null,
             sessionData : loadedSessionData,
             currentListKey : null,
+            swapIndexes: [null, null]
         }
     }
     sortKeyNamePairsByName = (keyNamePairs) => {
@@ -94,7 +95,7 @@ class App extends React.Component {
             currentList: prevState.currentList,
             sessionData: {
                 nextKey: prevState.sessionData.nextKey,
-                counter: prevState.sessionData.counter - 1,
+                counter: prevState.sessionData.counter,
                 keyNamePairs: newKeyNamePairs
             },
             currentListKey: prevState.currentListKey
@@ -195,6 +196,57 @@ class App extends React.Component {
         let modal = document.getElementById("delete-modal");
         modal.classList.remove("is-visible");
     }
+
+    startDrag = (startIndex) => {
+        let newSwapIndexes = [startIndex, this.state.swapIndexes[1]]
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            sessionData: {
+                nextKey: prevState.sessionData.nextKey,
+                counter: prevState.sessionData.counter,
+                keyNamePairs: prevState.sessionData.keyNamePairs,
+            },
+            currentListKey: prevState.currentListKey,
+            swapIndexes: newSwapIndexes
+        }), () => {
+            //MORE THINGS?
+        });
+    }
+
+    startDragOver = (endIndex) => {
+        let newSwapIndexes = [this.state.swapIndexes[0], endIndex];
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            sessionData: {
+                nextKey: prevState.sessionData.nextKey,
+                counter: prevState.sessionData.counter,
+                keyNamePairs: prevState.sessionData.keyNamePairs,
+            },
+            currentListKey: prevState.currentListKey,
+            swapIndexes: newSwapIndexes
+        }))
+    }
+
+    startDrop = () => {
+        let swappedList = this.state.currentList.items;
+        swappedList.splice(this.state.swapIndexes[1], 0, swappedList.splice(this.state.swapIndexes[0], 1)[0]);
+        console.log(swappedList);
+        let newList = this.state.currentList
+        newList.items = swappedList;
+        this.setState(prevState => ({
+            currentList: newList,
+            sessionData: {
+                nextKey: prevState.sessionData.nextKey,
+                counter: prevState.sessionData.counter,
+                keyNamePairs: prevState.sessionData.keyNamePairs,
+            },
+            currentListKey: prevState.currentListKey,
+            swapIndexes: [null, null]
+        }), () => {
+            //MORE THINGS?
+        });
+    }
+
     render() {
         return (
             <div id="app-root">
@@ -214,6 +266,9 @@ class App extends React.Component {
                 <Workspace
                     currentList={this.state.currentList} 
                     renameListItemCallback={this.renameListItem}
+                    dragStartCallback={this.startDrag}
+                    dragOverCallback={this.startDragOver}
+                    onDropCallback={this.startDrop}
                 />
                 <Statusbar 
                     currentList={this.state.currentList} />
