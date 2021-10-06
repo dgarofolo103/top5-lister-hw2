@@ -252,6 +252,7 @@ class App extends React.Component {
             <div id="app-root">
                 <Banner 
                     title='Top 5 Lister'
+                    currentList={this.state.currentList}
                     closeCallback={this.closeCurrentList} 
                 />
                 <Sidebar
