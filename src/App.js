@@ -121,7 +121,7 @@ class App extends React.Component {
             },
             currentListKey: prevState.currentListKey
         }), () => {
-            // ANY AFTER EFFECTS?
+            this.db.mutationUpdateList(currentList);
         });
     }
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
@@ -182,6 +182,7 @@ class App extends React.Component {
             },
             currentListKey: prevState.currentListKey
         }), () => {
+            this.db.mutationUpdateSessionData(this.state.sessionData);
             this.hideDeleteListModal();
         });
     }
@@ -243,7 +244,7 @@ class App extends React.Component {
             currentListKey: prevState.currentListKey,
             swapIndexes: [null, null]
         }), () => {
-            //MORE THINGS?
+            this.db.mutationUpdateList(newList);
         });
     }
 
